@@ -2,6 +2,12 @@
 
 Using the system, teachers can:
 
+## Account management
+
+### Login
+
+![Login](images/teacher-login.png)
+
 ## Courses management
 
 ### Create a new course
