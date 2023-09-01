@@ -13,3 +13,4 @@ In this repository you will find the shared documentation for the whole project.
 | -------------------------------------------------------------------------------- | --------------------------------- |
 | [overall-infrastructure.png](diagrams/infrastructure/overall-infrastructure.png) | A basic overview of the system    |
 | [database.md](diagrams/database/database.md)                                     | Database diagram and design notes |
+| [use-cases.md](diagrams/use-cases/use-cases.md)                                  | Index of use cases                |
