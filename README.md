@@ -9,7 +9,7 @@ In this repository you will find the shared documentation for the whole project.
 
 ## Index
 
-| File                                                              | Description                       |
-| ----------------------------------------------------------------- | --------------------------------- |
-| [overall-infrastructure.png](diagrams/overall-infrastructure.png) | A basic overview of the system    |
-| [database.md](diagrams/database.md)                               | Database diagram and design notes |
+| File                                                                             | Description                       |
+| -------------------------------------------------------------------------------- | --------------------------------- |
+| [overall-infrastructure.png](diagrams/infrastructure/overall-infrastructure.png) | A basic overview of the system    |
+| [database.md](diagrams/database/database.md)                                     | Database diagram and design notes |
