@@ -7,3 +7,8 @@
 
 In this repository you will find the shared documentation for the whole project.
 
+## Index
+
+| File                                | Description                       |
+| ----------------------------------- | --------------------------------- |
+| [database.md](diagrams/database.md) | Database diagram and design notes |
