@@ -78,8 +78,9 @@ erDiagram
     }
 
     languages {
-        UUID        id          "PK; AUTO"
-        String      name        "NOT NULL; UNIQUE"
+        UUID        id              "PK; AUTO"
+        String      name            "NOT NULL; UNIQUE"
+        BLOB        base_archive    "NOT NULL"
     }
 ```
 
@@ -94,3 +95,5 @@ erDiagram
 - The `colors` table is used to easily modify the color scheme of the system. Each class should have a randomly chosen color from the `colors` table associated with it.
 
 - The `languages` table stores the programming languages that can be used to write the code for the test blocks. The only supported language will be Java for now, but **the system needs to be able to support multiple languages in the future**.
+
+- The `base_archive` field in the `languages` table is a zip file containing the base code that will be used by the teachers to write the tests and by the students to write their code. This archive will be defined by the programmers.
