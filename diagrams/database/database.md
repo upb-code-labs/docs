@@ -14,32 +14,30 @@ erDiagram
     test_blocks  }o--|| languages: "Has programming language"
 
 	roles {
-        UUID    id          "PK; AUTO"
-        String  name        "NOT NULL; UNIQUE"
-        String  description "NOT NULL; UNIQUE"
+        UUID            id          "PK; AUTO"
+        VARCHAR(16)     name        "NOT NULL; UNIQUE"
     }
 
     users {
-        UUID    id                  "PK; AUTO"
-        UUID    roles               "FK; REFERENCES roles.id"
-        String  institutional_id    "NOT NULL; UNIQUE"
-        String  email               "NOT NULL; UNIQUE"
-        String  full_name           "NOT NULL"
-        String  password_hash       "NOT NULL"
+        UUID            id                  "PK; AUTO"
+        UUID            roles               "FK; REFERENCES roles.id"
+        VARCHAR(16)     institutional_id    "NOT NULL; UNIQUE"
+        VARCHAR(64)     email               "NOT NULL; UNIQUE"
+        VARCHAR(255)    full_name           "NOT NULL"
+        VARCHAR(255)    password_hash       "NOT NULL"
     }
 
     classes {
-        UUID    id                  "PK; AUTO"
-        UUID    teacher             "FK; REFERENCES users.uuid"
-        UUID    color_id            "FK; REFERENCES colors.uuid"
-        String  invitation_code     "NOT NULL; UNIQUE"
-        String  name                "NOT NULL"
-        String  color               "NOT NULL; HEXADECIMAL"
+        UUID            id                  "PK; AUTO"
+        UUID            teacher             "FK; REFERENCES users.uuid"
+        UUID            color_id            "FK; REFERENCES colors.uuid"
+        CHAR(8)         invitation_code     "NOT NULL; UNIQUE"
+        VARCHAR(255)    name                "NOT NULL"
     }
 
     colors {
-        UUID    id              "PK; AUTO"
-        String  hexadecimal     "NOT NULL; UNIQUE"
+        UUID        id              "PK; AUTO"
+        CHAR(7)     hexadecimal     "NOT NULL; UNIQUE"
     }
 
     class_has_students {
@@ -48,11 +46,11 @@ erDiagram
     }
 
     laboratories {
-        UUID        id              "PK; AUTO"
-        UUID        class_id        "FK; REFERENCES classes.id"
-        String      name            "NOT NULL"
-        Timestamp   opening_date    "NOT NULL"
-        Timestamp   due_date        "NOT NULL"
+        UUID                id              "PK; AUTO"
+        UUID                class_id        "FK; REFERENCES classes.id"
+        VARCHAR(255)        name            "NOT NULL"
+        Timestamp           opening_date    "NOT NULL"
+        Timestamp           due_date        "NOT NULL"
     }
 
     tasks {
@@ -62,25 +60,25 @@ erDiagram
     }
 
     markdown_blocks {
-        UUID        id              "PK; AUTO"
-        UUID        laboratory_id   "FK; REFERENCES laboratories.id"
-        String      content         "NULL"
-        Uint        index           "NOT NULL; DEFAULT 0"
+        UUID            id              "PK; AUTO"
+        UUID            laboratory_id   "FK; REFERENCES laboratories.id"
+        VARCHAR()       content         "NULL"
+        Uint            index           "NOT NULL; DEFAULT 0"
     }
 
     test_blocks {
-        UUID        id              "PK; AUTO"
-        UUID        laboratory_id   "FK; REFERENCES laboratories.id"
-        UUID        language        "FK; REFERENCES languages.uuid"
-        String      name            "NOT NULL"
-        BLOB        tests_archive   "NOT NULL"
-        Uint        index           "NOT NULL; DEFAULT 0"
+        UUID            id              "PK; AUTO"
+        UUID            laboratory_id   "FK; REFERENCES laboratories.id"
+        UUID            language        "FK; REFERENCES languages.uuid"
+        VARCHAR(255)    name            "NOT NULL"
+        BLOB            tests_archive   "NOT NULL"
+        Uint            index           "NOT NULL; DEFAULT 0"
     }
 
     languages {
-        UUID        id              "PK; AUTO"
-        String      name            "NOT NULL; UNIQUE"
-        BLOB        base_archive    "NOT NULL"
+        UUID            id              "PK; AUTO"
+        VARCHAR(32)      name            "NOT NULL; UNIQUE"
+        BLOB             base_archive    "NOT NULL"
     }
 ```
 
