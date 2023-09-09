@@ -2,16 +2,16 @@
 
 ```mermaid
 erDiagram
-    users }o--|| roles: "Has role"
-    classes }o--|| users: "Has teacher"
-    classes }o--|| colors: "Has color"
-    classes ||--o{ class_has_students: ""
-    users ||--o{ class_has_students: "Student belongs to multiple classes"
-    classes ||--o{ laboratories: "Has laboratories"
-    laboratories ||--|{	tasks: "Has tasks"
-    tasks ||--o{ markdown_blocks: "Has instructions"
-    tasks ||--o{ test_blocks: "Has code steps"
-    test_blocks  }o--|| languages: "Has programming language"
+    users }o--|| roles:                 "Has role"
+    classes }o--|| users:               "Has teacher"
+    classes }o--|| colors:              "Has color"
+    classes ||--o{ class_has_users:     "Has students and a teacher"
+    users ||--o{ class_has_users:       "Students can belong to multiple classes"
+    classes ||--o{ laboratories:        "Has laboratories"
+    laboratories ||--|{	tasks:          "Has tasks"
+    tasks ||--o{ markdown_blocks:       "Has instructions"
+    tasks ||--o{ test_blocks:           "Has code steps"
+    test_blocks  }o--|| languages:      "Has programming language"
 
 	roles {
         UUID            id          "PK; AUTO"
@@ -20,7 +20,7 @@ erDiagram
 
     users {
         UUID            id                  "PK; AUTO"
-        UUID            roles               "FK; REFERENCES roles.id"
+        UUID            role_id             "FK; REFERENCES roles.id"
         VARCHAR(16)     institutional_id    "NOT NULL; UNIQUE"
         VARCHAR(64)     email               "NOT NULL; UNIQUE"
         VARCHAR(255)    full_name           "NOT NULL"
@@ -40,9 +40,11 @@ erDiagram
         CHAR(7)     hexadecimal     "NOT NULL; UNIQUE"
     }
 
-    class_has_students {
-        UUID    class_id    "FK; REFERENCES classes.id"
-        UUID    student_id  "FK; REFERENCES users.id"
+    class_has_users {
+        UUID        class_id            "FK; REFERENCES classes.id"
+        UUID        user_id             "FK; REFERENCES users.id"
+        BOOLEAN     is_class_hidden     "DEFAULT FALSE"
+        BOOLEAN     is_user_active      "DEFAULT TRUE"
     }
 
     laboratories {
@@ -61,14 +63,14 @@ erDiagram
 
     markdown_blocks {
         UUID            id              "PK; AUTO"
-        UUID            laboratory_id   "FK; REFERENCES laboratories.id"
+        UUID            task_id         "FK; REFERENCES tasks.id"
         VARCHAR()       content         "NULL"
         Uint            index           "NOT NULL; DEFAULT 0"
     }
 
     test_blocks {
         UUID            id              "PK; AUTO"
-        UUID            laboratory_id   "FK; REFERENCES laboratories.id"
+        UUID            task_id         "FK; REFERENCES tasks.id"
         UUID            language        "FK; REFERENCES languages.uuid"
         VARCHAR(255)    name            "NOT NULL"
         BLOB            tests_archive   "NOT NULL"
