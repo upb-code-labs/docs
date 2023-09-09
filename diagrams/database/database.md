@@ -97,12 +97,13 @@ erDiagram
     }
 
     submissions {
-        UUID            id              "PK; AUTO"
-        UUID            test_id         "FK; REFERENCES test_blocks.id"
-        UUID            student_id      "FK; REFERENCES users.id"
-        BOOLEAN         passing         "DEFAULT FALSE"
-        VARCHAR(16)     status          "DEFAULT 'pending'; ENUM ['pending', 'running', 'ready']"
-        VARCHAR()       stdout          "DEFAULT NULL"
+        UUID            id                  "PK; AUTO"
+        UUID            test_id             "FK; REFERENCES test_blocks.id"
+        UUID            student_id          "FK; REFERENCES users.id"
+        BLOB            submission_archive  "NOT NULL"
+        BOOLEAN         passing             "DEFAULT FALSE"
+        VARCHAR(16)     status              "DEFAULT 'pending'; ENUM ['pending', 'running', 'ready']"
+        VARCHAR()       stdout              "DEFAULT NULL"
     }
 
     rubrics {
