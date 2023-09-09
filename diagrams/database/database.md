@@ -2,16 +2,26 @@
 
 ```mermaid
 erDiagram
-    users }o--|| roles:                 "Has role"
-    classes }o--|| users:               "Has teacher"
-    classes }o--|| colors:              "Has color"
-    classes ||--o{ class_has_users:     "Has students and a teacher"
-    users ||--o{ class_has_users:       "Students can belong to multiple classes"
-    classes ||--o{ laboratories:        "Has laboratories"
-    laboratories ||--|{	tasks:          "Has tasks"
-    tasks ||--o{ markdown_blocks:       "Has instructions"
-    tasks ||--o{ test_blocks:           "Has code steps"
-    test_blocks  }o--|| languages:      "Has programming language"
+    users }o--|| roles:                 "Have role"
+    users ||--o{ class_has_users:       "Belong to multiple classes"
+    users ||--o| grades:                "Have grades"
+
+    classes }o--|| users:               "Have teacher"
+    classes }o--|| colors:              "Have color"
+    classes ||--o{ class_has_users:     "Have students"
+    
+    classes ||--o{ laboratories:        "Have laboratories"
+    laboratories ||--|{	tasks:          "Have tasks"
+    tasks ||--o{ markdown_blocks:       "Have instructions"
+    tasks ||--o{ test_blocks:           "Have code steps"
+    test_blocks  }o--|| languages:      "Have programming language"
+
+    
+    laboratories ||--o|	rubrics:        "Can have a rubric"
+    rubrics ||--|{	objectives:         "Have one or more objectives"
+    objectives ||--|{ criteria:         "Have one or mor criteria"
+
+    laboratories ||--o| grades:         "Belong to laboratories"
 
 	roles {
         UUID            id          "PK; AUTO"
@@ -81,6 +91,32 @@ erDiagram
         UUID            id              "PK; AUTO"
         VARCHAR(32)      name            "NOT NULL; UNIQUE"
         BLOB             base_archive    "NOT NULL"
+    }
+
+    rubrics {
+        UUID            id              "PK; AUTO"
+        UUID            teacher_id      "FK; REFERENCES users.id"
+        VARCHAR(255)    name            "NOT NULL"
+    }
+
+    objectives {
+        UUID            id              "PK; AUTO"
+        VARCHAR(255)    name            "NOT NULL"
+    }
+
+    criteria {
+        UUID                id              "PK; AUTO"
+        UUID                objective_id    "FK; REFERENCES objectives.id"
+        Uint                index           "NOT NULL; DEFAULT 0"
+        VARCHAR()           description     "NOT NULL"
+        DECIMAL()           value           "NOT NULL"
+    }
+
+    grades {
+        UUID        id                  "PK; AUTO"
+        UUID        laboratory_id       "FK; REFERENCES laboratory.id"
+        UUID        student_id          "FK; REFERENCES users.id"
+        DECIMAL()   score               "NOT NULL"
     }
 ```
 
