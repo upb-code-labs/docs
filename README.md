@@ -9,8 +9,8 @@ In this repository you will find the shared documentation for the whole project.
 
 ## Index
 
-| File                                                                             | Description                       |
-| -------------------------------------------------------------------------------- | --------------------------------- |
-| [overall-infrastructure.png](diagrams/infrastructure/overall-infrastructure.png) | A basic overview of the system    |
-| [database.md](diagrams/database/database.md)                                     | Database diagram and design notes |
-| [use-cases.md](diagrams/use-cases/use-cases.md)                                  | Index of use cases                |
+| Folder                                | Description                                          |
+| ------------------------------------- | ---------------------------------------------------- |
+| [Database](database)                  | Contains the database diagram and dummy SQL queries. |
+| [Domain Use Cases](domain-use-cases/) | Contains the domain-oriented use cases diagrams.     |
+| [Infrastructure](infrastructure/)     | Contains the infrastructure diagrams.                |
