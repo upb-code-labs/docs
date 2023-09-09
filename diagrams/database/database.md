@@ -85,12 +85,12 @@ erDiagram
 
 ## Design notes
 
-- `Laboratories` are built from blocks of markdown and test code.
+- `Laboratories` are made up of `tasks` which are made up of `markdown blocks` and `test blocks`.
 
 - The `markdown blocks` are used by teachers to provide instructions to the students.
 
 - The `test blocks` are used to test the code written by the students.
 
-- The test file is created and uploaded by the teacher. It's not stored in the database but can be accessed from the file system using the `test_blocks.id` as the file name.
+- The `colors` table is used to easily modify the color scheme of the system. Each class should have a randomly chosen color from the `colors` table associated with it.
 
 - The `languages` table stores the programming languages that can be used to write the code for the test blocks. The only supported language will be Java for now, but **the system needs to be able to support multiple languages in the future**.
