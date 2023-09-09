@@ -2,26 +2,29 @@
 
 ```mermaid
 erDiagram
-    users }o--|| roles:                 "Have role"
-    users ||--o{ class_has_users:       "Belong to multiple classes"
-    users ||--o| grades:                "Have grades"
-
     classes }o--|| users:               "Have teacher"
     classes }o--|| colors:              "Have color"
     classes ||--o{ class_has_users:     "Have students"
-    
     classes ||--o{ laboratories:        "Have laboratories"
+    
     laboratories ||--|{	tasks:          "Have tasks"
+    laboratories ||--o|	rubrics:        "Can have a rubric"
+
     tasks ||--o{ markdown_blocks:       "Have instructions"
     tasks ||--o{ test_blocks:           "Have code steps"
-    test_blocks  }o--|| languages:      "Have programming language"
 
+    test_blocks  }o--|| languages:      "Have programming language"
+    test_blocks ||--o{ submissions:     "Have submissions"
+
+    users }o--|| roles:                 "Have role"
+    users ||--o| grades:                "Have grades"
+    users ||--o{ submissions:           "Make submissions"
+    users ||--o{ class_has_users:       "Belong to multiple classes"
     
-    laboratories ||--o|	rubrics:        "Can have a rubric"
     rubrics ||--|{	objectives:         "Have one or more objectives"
     objectives ||--|{ criteria:         "Have one or mor criteria"
-
     laboratories ||--o| grades:         "Belong to laboratories"
+
 
 	roles {
         UUID            id          "PK; AUTO"
@@ -91,6 +94,15 @@ erDiagram
         UUID            id              "PK; AUTO"
         VARCHAR(32)      name            "NOT NULL; UNIQUE"
         BLOB             base_archive    "NOT NULL"
+    }
+
+    submissions {
+        UUID            id              "PK; AUTO"
+        UUID            test_id         "FK; REFERENCES test_blocks.id"
+        UUID            student_id      "FK; REFERENCES users.id"
+        BOOLEAN         passing         "DEFAULT FALSE"
+        VARCHAR(16)     status          "DEFAULT 'pending'; ENUM ['pending', 'running', 'ready']"
+        VARCHAR()       stdout          "DEFAULT NULL"
     }
 
     rubrics {
