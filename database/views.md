@@ -23,8 +23,7 @@ CREATE OR REPLACE VIEW students_advances_view AS
         COUNT(submissions.id)   AS passing_tests
     FROM submissions
     JOIN test_blocks ON submissions.test_id = test_blocks.id
-    JOIN tasks ON test_blocks.task_id = tasks.id
-    JOIN laboratories ON tasks.laboratory_id = laboratories.id
+    JOIN laboratories ON test_blocks.laboratory_id = laboratories.id
     WHERE submissions.passing = TRUE
     GROUP BY submissions.test_id, submissions.student_id;
 ```

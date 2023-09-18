@@ -31,7 +31,7 @@ END $$
 
 ### Get the students enrolled in a class
 
-````sql
+```sql
 CREATE OR REPLACE FUNCTION get_students_enrolled_in_class(
     class_id UUID
 )
@@ -53,12 +53,12 @@ BEGIN
         class_has_users.class_id = class_id AND
         class_has_users.is_user_active = TRUE;
 END $$
+;
+```
 
 ## Laboratories 🧪
 
 ### Create a new laboratory
-
-Creating a new laboratory also creates a default or first tasks to allow the teachers to start writing instructions and tests.
 
 ```sql
 CREATE OR REPLACE FUNCTION create_laboratory(
@@ -72,22 +72,15 @@ CREATE OR REPLACE FUNCTION create_laboratory(
     AS $$
 DECLARE
     laboratory_id UUID;
-    first_task_id UUID;
-    result RECORD;
 BEGIN
     INSERT INTO laboratories (class_id, name, opening_date, due_date)
     VALUES (class_id, name, opening_date, due_date)
     RETURNING id INTO laboratory_id;
 
-    INSERT INTO tasks (laboratory_id)
-    VALUES (laboratory_id)
-    RETURNING id INTO first_task_id;
-
-    result := (laboratory_id, first_task_id);
-    RETURN result;
+    RETURN laboratory_id;
 END $$
 ;
-````
+```
 
 ### Swap the position of two blocks
 
@@ -152,11 +145,10 @@ DECLARE
 BEGIN
     -- Get the number of tests
     SELECT COUNT(*) INTO tests_count FROM test_blocks
-    WHERE task_id IN (
-        SELECT id FROM tasks
-        WHERE laboratory_id = laboratory_id_param
-    );
+    WHERE
+        laboratory_id = laboratory_id_param;
 
     RETURN tests_count;
 END $$
+;
 ```

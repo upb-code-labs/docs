@@ -2,29 +2,27 @@
 
 ```mermaid
 erDiagram
+    users }o--|| roles:                 "Have role"
+    users ||--o{ class_has_users:       "Belong to multiple classes"
+    users ||--o{ submissions:           "Make submissions"
+    users ||--o| grades:                "Have grades"
+
     classes }o--|| users:               "Have teacher"
     classes }o--|| colors:              "Have color"
     classes ||--o{ class_has_users:     "Have students"
     classes ||--o{ laboratories:        "Have laboratories"
 
-    laboratories ||--|{	tasks:          "Have tasks"
-    laboratories ||--o|	rubrics:        "Can have a rubric"
+    laboratories ||--o{ markdown_blocks:    "Have instructions"
+    laboratories ||--o{ test_blocks:        "Have tests"
+    laboratories ||--o|	rubrics:            "Can have a rubric"
+    grades }o--|| laboratories:             "Belong a laboratory"
 
-    tasks ||--o{ markdown_blocks:       "Have instructions"
-    tasks ||--o{ test_blocks:           "Have code steps"
 
     test_blocks  }o--|| languages:      "Have programming language"
-    test_blocks ||--o{ submissions:     "Have submissions"
-
-    users }o--|| roles:                 "Have role"
-    users ||--o| grades:                "Have grades"
-    users ||--o{ submissions:           "Make submissions"
-    users ||--o{ class_has_users:       "Belong to multiple classes"
+    submissions }o--|| test_blocks:    "Belong to a test"
 
     rubrics ||--|{	objectives:         "Have one or more objectives"
     objectives ||--|{ criteria:         "Have one or mor criteria"
-    laboratories ||--o| grades:         "Belong to laboratories"
-
 
 	roles {
         UUID            id          "PK; AUTO"
@@ -69,22 +67,16 @@ erDiagram
         Timestamp           due_date        "NOT NULL"
     }
 
-    tasks {
-        UUID        id              "PK; AUTO"
-        UUID        laboratory_id   "FK; REFERENCES laboratories.id"
-        Timestamp   created_at      "DEFAULT NOW"
-    }
-
     markdown_blocks {
         UUID            id              "PK; AUTO"
-        UUID            task_id         "FK; REFERENCES tasks.id"
+        UUID            laboratory_id   "FK; REFERENCES laboratories.id"
         VARCHAR()       content         "NULL"
         Uint            index           "NOT NULL; DEFAULT 0"
     }
 
     test_blocks {
         UUID            id              "PK; AUTO"
-        UUID            task_id         "FK; REFERENCES tasks.id"
+        UUID            laboratory_id   "FK; REFERENCES laboratories.id"
         UUID            language        "FK; REFERENCES languages.uuid"
         VARCHAR(255)    name            "NOT NULL"
         BLOB            tests_archive   "NOT NULL"
@@ -137,7 +129,7 @@ erDiagram
 
 ## Design notes 🤔
 
-- `Laboratories` are made up of `tasks` which are made up of `markdown blocks` and `test blocks`.
+- `Laboratories` are made up of `markdown blocks` to provide instructions to the students and `test blocks` to test the code written by the students.
 
 - The `markdown blocks` are used by teachers to provide instructions to the students.
 
