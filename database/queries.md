@@ -112,3 +112,26 @@ BEGIN
 END $$
 ;
 ```
+
+### Get the number of tests in a laboratory
+
+```sql
+CREATE OR REPLACE FUNCTION count_tests_in_laboratory(
+    laboratory_id_param UUID
+)
+    RETURNS UINT
+    LANGUAGE PLPGSQL
+    AS $$
+DECLARE
+    tests_count UINT;
+BEGIN
+    -- Get the number of tests
+    SELECT COUNT(*) INTO tests_count FROM test_blocks
+    WHERE task_id IN (
+        SELECT id FROM tasks
+        WHERE laboratory_id = laboratory_id_param
+    );
+
+    RETURN tests_count;
+END $$
+```
