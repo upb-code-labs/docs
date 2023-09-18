@@ -103,11 +103,10 @@ DECLARE
     passing_tests UINT;
 BEGIN
     -- Get the number of passing tests
-    SELECT COUNT(id) into passing_tests FROM submissions WHERE student_id = student_id AND test_id IN (
-        SELECT id FROM test_blocks WHERE task_id IN (
-            SELECT id FROM tasks WHERE laboratory_id = laboratory_id_param
-        )
-    ) AND passing = TRUE;
+    SELECT passing_tests INTO passing_tests FROM students_advances_view
+    WHERE
+        user_id = student_id AND
+        laboratory_id = laboratory_id_param;
 
     RETURN passing_tests;
 END $$
