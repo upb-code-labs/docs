@@ -1,6 +1,8 @@
 # Dummy queries 🏗️
 
-## Create a new class
+## Classes 📚
+
+### Create a new class
 
 The `color` field can be chosen from the API using the `colors` table since it wont change often.
 
@@ -27,7 +29,9 @@ BEGIN
 END $$
 ```
 
-## Create a new laboratory
+## Laboratories 🧪
+
+### Create a new laboratory
 
 Creating a new laboratory also creates a default or first tasks to allow the teachers to start writing instructions and tests.
 
@@ -60,7 +64,7 @@ END $$
 ;
 ```
 
-## Swap the position of two blocks
+### Swap the position of two blocks
 
 The position of two blocks can be swapped by changing their `index` field. The teachers should be able to swap the positions of two adjacent blocks by clicking on up and down arrows.
 
@@ -81,6 +85,31 @@ BEGIN
 
     UPDATE markdown_blocks SET index = second_block_index WHERE id = first_block_id;
     UPDATE markdown_blocks SET index = first_block_index WHERE id = second_block_id;
+END $$
+;
+```
+
+### Get the number of tests completed by a student
+
+```sql
+CREATE OR REPLACE FUNCTION count_tests_completed_by_student(
+    student_id UUID,
+    laboratory_id_param UUID
+)
+    RETURNS FLOAT
+    LANGUAGE PLPGSQL
+    AS $$
+DECLARE
+    passing_tests UINT;
+BEGIN
+    -- Get the number of passing tests
+    SELECT COUNT(id) into passing_tests FROM submissions WHERE student_id = student_id AND test_id IN (
+        SELECT id FROM test_blocks WHERE task_id IN (
+            SELECT id FROM tasks WHERE laboratory_id = laboratory_id_param
+        )
+    ) AND passing = TRUE;
+
+    RETURN passing_tests;
 END $$
 ;
 ```
