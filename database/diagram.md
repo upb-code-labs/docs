@@ -6,7 +6,7 @@ erDiagram
     classes }o--|| colors:              "Have color"
     classes ||--o{ class_has_users:     "Have students"
     classes ||--o{ laboratories:        "Have laboratories"
-    
+
     laboratories ||--|{	tasks:          "Have tasks"
     laboratories ||--o|	rubrics:        "Can have a rubric"
 
@@ -20,7 +20,7 @@ erDiagram
     users ||--o| grades:                "Have grades"
     users ||--o{ submissions:           "Make submissions"
     users ||--o{ class_has_users:       "Belong to multiple classes"
-    
+
     rubrics ||--|{	objectives:         "Have one or more objectives"
     objectives ||--|{ criteria:         "Have one or mor criteria"
     laboratories ||--o| grades:         "Belong to laboratories"
@@ -63,6 +63,7 @@ erDiagram
     laboratories {
         UUID                id              "PK; AUTO"
         UUID                class_id        "FK; REFERENCES classes.id"
+        UUID                rubric_id       "FK; DEFAULT NULL; REFERENCES rubrics.id"
         VARCHAR(255)        name            "NOT NULL"
         Timestamp           opening_date    "NOT NULL"
         Timestamp           due_date        "NOT NULL"
@@ -114,15 +115,16 @@ erDiagram
 
     objectives {
         UUID            id              "PK; AUTO"
+        UUID            rubric_id       "FK; REFERENCES rubrics.id"
         VARCHAR(255)    name            "NOT NULL"
     }
 
     criteria {
         UUID                id              "PK; AUTO"
         UUID                objective_id    "FK; REFERENCES objectives.id"
-        Uint                index           "NOT NULL; DEFAULT 0"
         VARCHAR()           description     "NOT NULL"
         DECIMAL()           value           "NOT NULL"
+        Timestamp   created_at      "DEFAULT NOW"
     }
 
     grades {
@@ -146,3 +148,5 @@ erDiagram
 - The `languages` table stores the programming languages that can be used to write the code for the test blocks. The only supported language will be Java for now, but **the system needs to be able to support multiple languages in the future**.
 
 - The `base_archive` field in the `languages` table is a zip file containing the base code that will be used by the teachers to write the tests and by the students to write their code. This archive will be defined by the programmers.
+
+- Add an `UNIQUE` constraint to the `submissions` table to prevent students from submitting code to the same tests multiple times. `UNIQUE (test_id, student_id)`.
