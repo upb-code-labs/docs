@@ -1,6 +1,8 @@
 # Dummy queries 🏗️
 
-## Create a new class
+## Classes 📚
+
+### Create a new class
 
 The `color` field can be chosen from the API using the `colors` table since it wont change often.
 
@@ -27,7 +29,34 @@ BEGIN
 END $$
 ```
 
-## Create a new laboratory
+### Get the students enrolled in a class
+
+````sql
+CREATE OR REPLACE FUNCTION get_students_enrolled_in_class(
+    class_id UUID
+)
+    RETURNS TABLE (
+        id UUID,
+        full_name VARCHAR(255),
+    )
+    LANGUAGE PLPGSQL
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        users.id,
+        users.institutional_id,
+        users.full_name
+    FROM users
+    JOIN class_has_users ON users.id = class_has_users.user_id
+    WHERE
+        class_has_users.class_id = class_id AND
+        class_has_users.is_user_active = TRUE;
+END $$
+
+## Laboratories 🧪
+
+### Create a new laboratory
 
 Creating a new laboratory also creates a default or first tasks to allow the teachers to start writing instructions and tests.
 
@@ -58,9 +87,9 @@ BEGIN
     RETURN result;
 END $$
 ;
-```
+````
 
-## Swap the position of two blocks
+### Swap the position of two blocks
 
 The position of two blocks can be swapped by changing their `index` field. The teachers should be able to swap the positions of two adjacent blocks by clicking on up and down arrows.
 
@@ -83,4 +112,51 @@ BEGIN
     UPDATE markdown_blocks SET index = first_block_index WHERE id = second_block_id;
 END $$
 ;
+```
+
+### Get the number of tests completed by a student
+
+```sql
+CREATE OR REPLACE FUNCTION count_tests_completed_by_student(
+    student_id UUID,
+    laboratory_id_param UUID
+)
+    RETURNS FLOAT
+    LANGUAGE PLPGSQL
+    AS $$
+DECLARE
+    passing_tests UINT;
+BEGIN
+    -- Get the number of passing tests
+    SELECT passing_tests INTO passing_tests FROM students_advances_view
+    WHERE
+        user_id = student_id AND
+        laboratory_id = laboratory_id_param;
+
+    RETURN passing_tests;
+END $$
+;
+```
+
+### Get the number of tests in a laboratory
+
+```sql
+CREATE OR REPLACE FUNCTION count_tests_in_laboratory(
+    laboratory_id_param UUID
+)
+    RETURNS UINT
+    LANGUAGE PLPGSQL
+    AS $$
+DECLARE
+    tests_count UINT;
+BEGIN
+    -- Get the number of tests
+    SELECT COUNT(*) INTO tests_count FROM test_blocks
+    WHERE task_id IN (
+        SELECT id FROM tasks
+        WHERE laboratory_id = laboratory_id_param
+    );
+
+    RETURN tests_count;
+END $$
 ```
