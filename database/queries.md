@@ -29,6 +29,31 @@ BEGIN
 END $$
 ```
 
+### Get the students enrolled in a class
+
+````sql
+CREATE OR REPLACE FUNCTION get_students_enrolled_in_class(
+    class_id UUID
+)
+    RETURNS TABLE (
+        id UUID,
+        full_name VARCHAR(255),
+    )
+    LANGUAGE PLPGSQL
+    AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        users.id,
+        users.institutional_id,
+        users.full_name
+    FROM users
+    JOIN class_has_users ON users.id = class_has_users.user_id
+    WHERE
+        class_has_users.class_id = class_id AND
+        class_has_users.is_user_active = TRUE;
+END $$
+
 ## Laboratories 🧪
 
 ### Create a new laboratory
@@ -62,7 +87,7 @@ BEGIN
     RETURN result;
 END $$
 ;
-```
+````
 
 ### Swap the position of two blocks
 
