@@ -2,7 +2,6 @@
 
 ```mermaid
 erDiagram
-    users }o--|| roles:                 "Have role"
     users ||--o{ class_has_users:       "Belong to multiple classes"
     users ||--o{ submissions:           "Make submissions"
     users ||--o| grades:                "Have grades"
@@ -25,14 +24,9 @@ erDiagram
     rubrics ||--|{	objectives:         "Have one or more objectives"
     objectives ||--|{ criteria:         "Have one or mor criteria"
 
-	roles {
-        UUID            id          "PK; AUTO"
-        VARCHAR(16)     name        "NOT NULL; UNIQUE"
-    }
-
     users {
         UUID            id                  "PK; AUTO"
-        UUID            role_id             "FK; REFERENCES roles.id"
+        VARCHAR(16)     role                "NOT NULL; ENUM ['student', 'teacher', 'admin']"
         VARCHAR(16)     institutional_id    "NOT NULL; UNIQUE"
         VARCHAR(64)     email               "NOT NULL; UNIQUE"
         VARCHAR(255)    full_name           "NOT NULL"
