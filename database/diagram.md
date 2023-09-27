@@ -28,7 +28,7 @@ erDiagram
     users {
         UUID            id                  "PK; AUTO"
         VARCHAR(16)     role                "NOT NULL; ENUM ['student', 'teacher', 'admin']"
-        VARCHAR(16)     institutional_id    "NOT NULL; UNIQUE"
+        VARCHAR(16)     institutional_id    "NULL; UNIQUE"
         VARCHAR(64)     email               "NOT NULL; UNIQUE"
         VARCHAR(255)    full_name           "NOT NULL"
         VARCHAR(255)    password_hash       "NOT NULL"
