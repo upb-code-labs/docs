@@ -10,6 +10,7 @@ erDiagram
     classes }o--|| colors:              "Have color"
     classes ||--o{ class_has_users:     "Have students"
     classes ||--o{ laboratories:        "Have laboratories"
+    invitation_codes |o--|| classes:    "Belong to a class"
 
     laboratories ||--o{ markdown_blocks:    "Have instructions"
     laboratories ||--o{ test_blocks:        "Have tests"
@@ -31,14 +32,20 @@ erDiagram
         VARCHAR(64)     email               "NOT NULL; UNIQUE"
         VARCHAR(255)    full_name           "NOT NULL"
         VARCHAR(255)    password_hash       "NOT NULL"
+        Timestamp       created_at          "NOT NULL; DEFAULT NOW"
     }
 
     classes {
         UUID            id                  "PK; AUTO"
         UUID            teacher             "FK; REFERENCES users.uuid"
         UUID            color_id            "FK; REFERENCES colors.uuid"
-        CHAR(8)         invitation_code     "NOT NULL; UNIQUE"
         VARCHAR(255)    name                "NOT NULL"
+    }
+
+    invitation_codes {
+        UUID            class_id        "FK; REFERENCES classes.id; UNIQUE"
+        VARCHAR(9)      code            "NOT NULL; UNIQUE"
+        Timestamp       generated_at    "NOT NULL; DEFAULT NOW"
     }
 
     colors {
