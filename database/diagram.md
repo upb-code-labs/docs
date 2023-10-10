@@ -16,6 +16,7 @@ erDiagram
     laboratories ||--o{ test_blocks:        "Have tests"
     laboratories ||--o|	rubrics:            "Can have a rubric"
     grades }o--|| laboratories:             "Belong a laboratory"
+    grades ||--o{ grades_criteria:          "Can be obtained from criteria"
 
 
     test_blocks  }o--|| languages:      "Have programming language"
@@ -116,16 +117,31 @@ erDiagram
         UUID                objective_id    "FK; REFERENCES objectives.id"
         VARCHAR()           description     "NOT NULL"
         DECIMAL()           value           "NOT NULL"
-        Timestamp   created_at      "DEFAULT NOW"
     }
 
     grades {
         UUID        id                  "PK; AUTO"
         UUID        laboratory_id       "FK; REFERENCES laboratory.id"
         UUID        student_id          "FK; REFERENCES users.id"
-        DECIMAL()   score               "NOT NULL"
+    }
+
+    grades_criteria {
+        UUID        id               "PK; AUTO"
+        UUID        grade_id        "FK; REFERENCES grades.id"
+        UUID        objective_id    "FK; REFERENCES objectives.id"
+        UUID        criteria_id     "FK; REFERENCES criteria.id"
     }
 ```
+
+## Indexes 📚
+
+- Add an `UNIQUE` constraint to the `class_has_users` table to prevent students from joining the same class multiple times. `UNIQUE (class_id, user_id)`.
+
+- Add an `UNIQUE` constraint to the `submissions` table to prevent students from submitting code to the same tests multiple times: `UNIQUE (test_id, student_id)`.
+
+- Add an `UNIQUE` constraint to the `grades` table to prevent students from being graded multiple times for the same laboratory: `UNIQUE (laboratory_id, student_id)`.
+
+- Add an `UNIQUE` constraint to the `grades_criteria` table to prevent objectives to be graded multiple times for the same laboratory using different criteria: `UNIQUE (grade_id, objective_id)`.
 
 ## Design notes 🤔
 
@@ -140,5 +156,3 @@ erDiagram
 - The `languages` table stores the programming languages that can be used to write the code for the test blocks. The only supported language will be Java for now, but **the system needs to be able to support multiple languages in the future**.
 
 - The `base_archive` field in the `languages` table is a zip file containing the base code that will be used by the teachers to write the tests and by the students to write their code. This archive will be defined by the programmers.
-
-- Add an `UNIQUE` constraint to the `submissions` table to prevent students from submitting code to the same tests multiple times. `UNIQUE (test_id, student_id)`.
