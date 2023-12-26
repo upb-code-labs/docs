@@ -27,6 +27,11 @@ erDiagram
     markdown_blocks ||--|| blocks_index:    "Has index"
     test_blocks ||--|| blocks_index:        "Has index"
 
+    test_blocks ||--|| archives:        "Has a test archive"
+    submissions ||--|| archives:        "Has an archive to be tested"
+    languages ||--|| archives:          "Has a base archive"
+
+
     users {
         UUID            id                  "PK; AUTO"
         UUID            created_by          "FK; REFERENCES users.id"
@@ -86,29 +91,35 @@ erDiagram
     }
 
     test_blocks {
-        UUID            id              "PK; AUTO"
-        UUID            block_index_id  "FK; REFERENCES blocks_index.id"
-        UUID            laboratory_id   "FK; REFERENCES laboratories.id"
-        UUID            language_id     "FK; REFERENCES languages.uuid"
-        VARCHAR(255)    name            "NOT NULL"
-        BLOB            tests_archive   "NOT NULL"
-        Uint            index           "NOT NULL; DEFAULT 0"
+        UUID            id                  "PK; AUTO"
+        UUID            block_index_id      "FK; REFERENCES blocks_index.id"
+        UUID            laboratory_id       "FK; REFERENCES laboratories.id"
+        UUID            language_id         "FK; REFERENCES languages.id"
+        BLOB            tests_archive_id    "FK; REFERENCES archives.id"
+        VARCHAR(255)    name                "NOT NULL"
+        Uint            index               "NOT NULL; DEFAULT 0"
     }
 
     languages {
+        UUID             id                 "PK; AUTO"
+        UUID             base_archive_id    "FK; REFERENCES archives.id"
+        VARCHAR(32)      name               "NOT NULL; UNIQUE"
+    }
+
+    archives {
         UUID            id              "PK; AUTO"
-        VARCHAR(32)      name            "NOT NULL; UNIQUE"
-        BLOB             base_archive    "NOT NULL"
+        UUID            file_id         "NOT NULL; UNIQUE"
     }
 
     submissions {
         UUID            id                  "PK; AUTO"
         UUID            test_id             "FK; REFERENCES test_blocks.id"
         UUID            student_id          "FK; REFERENCES users.id"
-        BLOB            archive             "NOT NULL"
+        UUID            archive_id          "FK; REFERENCES archives.id"
         BOOLEAN         passing             "DEFAULT FALSE"
-        VARCHAR(16)     status              "DEFAULT 'pending'; ENUM ['pending', 'running', 'ready']"
+        ENUM            status              "DEFAULT 'pending'; ONE OF {'pending', 'running', 'ready'}"
         VARCHAR()       stdout              "DEFAULT NULL"
+        Timestamp       created_at          "NOT NULL; DEFAULT NOW()"
     }
 
     rubrics {
