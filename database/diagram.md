@@ -2,15 +2,15 @@
 
 ```mermaid
 erDiagram
-    users }o--|| roles:                 "Have role"
-    users ||--o{ class_has_users:       "Belong to multiple classes"
+    users ||--o{ courses_has_users:       "Belong to multiple courses"
     users ||--o{ submissions:           "Make submissions"
     users ||--o| grades:                "Have grades"
 
-    classes }o--|| users:               "Have teacher"
-    classes }o--|| colors:              "Have color"
-    classes ||--o{ class_has_users:     "Have students"
-    classes ||--o{ laboratories:        "Have laboratories"
+    courses }o--|| users:               "Have teacher"
+    courses }o--|| colors:              "Have color"
+    courses ||--o{ courses_has_users:     "Have students"
+    courses ||--o{ laboratories:        "Have laboratories"
+    courses ||--o|  invitation_codes:   "Have one invitation code"
 
     laboratories ||--o{ markdown_blocks:    "Have instructions"
     laboratories ||--o{ test_blocks:        "Have tests"
@@ -24,26 +24,31 @@ erDiagram
     rubrics ||--|{	objectives:         "Have one or more objectives"
     objectives ||--|{ criteria:         "Have one or mor criteria"
 
-	roles {
-        UUID            id          "PK; AUTO"
-        VARCHAR(16)     name        "NOT NULL; UNIQUE"
-    }
+    markdown_blocks ||--|| blocks_index:    "Has index"
+    test_blocks ||--|| blocks_index:        "Has index"
 
     users {
         UUID            id                  "PK; AUTO"
-        UUID            role_id             "FK; REFERENCES roles.id"
+        UUID            created_by          "FK; REFERENCES users.id"
+        ENUM            role                "NOT NULL; ONE OF {'admin', 'teacher', 'student'}"
         VARCHAR(16)     institutional_id    "NOT NULL; UNIQUE"
         VARCHAR(64)     email               "NOT NULL; UNIQUE"
         VARCHAR(255)    full_name           "NOT NULL"
         VARCHAR(255)    password_hash       "NOT NULL"
+        Timestamp       created_at          "NOT NULL; DEFAULT NOW()"
     }
 
-    classes {
+    courses {
         UUID            id                  "PK; AUTO"
         UUID            teacher             "FK; REFERENCES users.uuid"
         UUID            color_id            "FK; REFERENCES colors.uuid"
-        CHAR(8)         invitation_code     "NOT NULL; UNIQUE"
         VARCHAR(255)    name                "NOT NULL"
+    }
+
+    invitation_codes {
+        UUID            course_id           "PK; FK; REFERENCES courses.id"
+        CHAR(9)         code                "NOT NULL; UNIQUE"
+        Timestamp       created_at          "NOT NULL; DEFAULT NOW()"
     }
 
     colors {
@@ -51,8 +56,8 @@ erDiagram
         CHAR(7)     hexadecimal     "NOT NULL; UNIQUE"
     }
 
-    class_has_users {
-        UUID        class_id            "FK; REFERENCES classes.id"
+    courses_has_users {
+        UUID        course_id            "FK; REFERENCES courses.id"
         UUID        user_id             "FK; REFERENCES users.id"
         BOOLEAN     is_class_hidden     "DEFAULT FALSE"
         BOOLEAN     is_user_active      "DEFAULT TRUE"
@@ -60,24 +65,31 @@ erDiagram
 
     laboratories {
         UUID                id              "PK; AUTO"
-        UUID                class_id        "FK; REFERENCES classes.id"
+        UUID                course_id        "FK; REFERENCES courses.id"
         UUID                rubric_id       "FK; DEFAULT NULL; REFERENCES rubrics.id"
         VARCHAR(255)        name            "NOT NULL"
         Timestamp           opening_date    "NOT NULL"
         Timestamp           due_date        "NOT NULL"
     }
 
+    blocks_index {
+        UUID            id                  "PK; AUTO"
+        UUID            laboratory_id       "FK; REFERENCES laboratories.id"
+        SMALLINT        block_position      "NOT NULL"
+    }
+
     markdown_blocks {
         UUID            id              "PK; AUTO"
+        UUID            block_index_id  "FK; REFERENCES blocks_index.id"
         UUID            laboratory_id   "FK; REFERENCES laboratories.id"
         VARCHAR()       content         "NULL"
-        Uint            index           "NOT NULL; DEFAULT 0"
     }
 
     test_blocks {
         UUID            id              "PK; AUTO"
+        UUID            block_index_id  "FK; REFERENCES blocks_index.id"
         UUID            laboratory_id   "FK; REFERENCES laboratories.id"
-        UUID            language        "FK; REFERENCES languages.uuid"
+        UUID            language_id     "FK; REFERENCES languages.uuid"
         VARCHAR(255)    name            "NOT NULL"
         BLOB            tests_archive   "NOT NULL"
         Uint            index           "NOT NULL; DEFAULT 0"
@@ -108,15 +120,16 @@ erDiagram
     objectives {
         UUID            id              "PK; AUTO"
         UUID            rubric_id       "FK; REFERENCES rubrics.id"
-        VARCHAR(255)    name            "NOT NULL"
+        VARCHAR(510)    description     "NOT NULL"
+        Timestamp       created_at      "NOT NULL; DEFAULT NOW()"
     }
 
     criteria {
         UUID                id              "PK; AUTO"
         UUID                objective_id    "FK; REFERENCES objectives.id"
-        VARCHAR()           description     "NOT NULL"
-        DECIMAL()           value           "NOT NULL"
-        Timestamp   created_at      "DEFAULT NOW"
+        VARCHAR(510)        description     "NOT NULL"
+        DECIMAL()           weight          "NOT NULL"
+        Timestamp   created_at              "NOT NULL; DEFAULT NOW"
     }
 
     grades {
