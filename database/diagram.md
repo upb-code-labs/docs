@@ -97,7 +97,6 @@ erDiagram
         UUID            language_id         "FK; REFERENCES languages.id"
         BLOB            tests_archive_id    "FK; REFERENCES archives.id"
         VARCHAR(255)    name                "NOT NULL"
-        Uint            index               "NOT NULL; DEFAULT 0"
     }
 
     languages {
