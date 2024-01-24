@@ -23,3 +23,9 @@
 ### Grades management
 
 ![Grades management](images/laboratories-grades.jpg)
+
+## Languages 🗃️
+
+### Languages management
+
+![Languages management](images/languages.jpg)
