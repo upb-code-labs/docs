@@ -16,6 +16,14 @@
 
 ![Rubrics management](images/rubrics.jpg)
 
+### Objectives management
+
+![Objectives management](images/rubrics-objectives.jpg)
+
+### Criteria management
+
+![Criteria management](images/rubrics-criteria.jpg)
+
 ## Laboratories 🧪
 
 ### Laboratories management
@@ -31,3 +39,9 @@ Laboratories are conformed by **steps**. Each step is conformed by **tasks** or 
 ### Grades management
 
 ![Grades management](images/laboratories-grades.jpg)
+
+## Languages 🗃️
+
+### Languages management
+
+![Languages management](images/languages.jpg)
