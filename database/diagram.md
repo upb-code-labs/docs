@@ -101,9 +101,9 @@ erDiagram
     }
 
     languages {
-        UUID            id              "PK; AUTO"
-        VARCHAR(32)      name            "NOT NULL; UNIQUE"
-        BLOB             base_archive    "NOT NULL"
+        UUID            id                      "PK; AUTO"
+        UUID            template_archive_id     "FK; REFERENCES archives.id"
+        VARCHAR(32)      name                   "NOT NULL; UNIQUE"
     }
 
     submissions {
@@ -155,13 +155,15 @@ erDiagram
 
 ## Indexes 📚
 
-- Add an `UNIQUE` constraint to the `class_has_users` table to prevent students from joining the same class multiple times. `UNIQUE (class_id, user_id)`.
+- Add an `UNIQUE` constraint to the `course_has_users` table to prevent students from joining the same course multiple times. `UNIQUE (course_id, user_id)`.
 
-- Add an `UNIQUE` constraint to the `submissions` table to prevent students from submitting code to the same tests multiple times: `UNIQUE (test_id, student_id)`.
+- Add an `UNIQUE` constraint to the `submissions` table to prevent students from submitting code to the same tests multiple times: `UNIQUE (test_block_id, student_id)`.
 
-- Add an `UNIQUE` constraint to the `grades` table to prevent students from being graded multiple times for the same laboratory: `UNIQUE (laboratory_id, student_id)`.
+- Add an `UNIQUE` constraint to the `grades` table to prevent students from being graded multiple times for the same laboratory with the same rubric: `UNIQUE (laboratory_id, student_id, rubric_id)`.
 
 - Add an `UNIQUE` constraint to the `grades_criteria` table to prevent objectives to be graded multiple times for the same laboratory using different criteria: `UNIQUE (grade_id, objective_id)`.
+
+- Add an `UNIQUE` constraint to the `blocks_index` table to prevent multiple blocks to be added to the same laboratory with the same position: `UNIQUE (laboratory_id, block_position)`.
 
 ## Design notes 🤔
 
@@ -171,8 +173,12 @@ erDiagram
 
 - The `test blocks` are used to test the code written by the students.
 
-- The `colors` table is used to easily modify the color scheme of the system. Each class should have a randomly chosen color from the `colors` table associated with it.
+- The `colors` table is used to easily modify the color scheme of the system. Each course should have a randomly chosen color from the `colors` table associated with it.
 
 - The `languages` table stores the programming languages that can be used to write the code for the test blocks. The only supported language will be Java for now, but **the system needs to be able to support multiple languages in the future**.
 
-- The `base_archive` field in the `languages` table is a zip file containing the base code that will be used by the teachers to write the tests and by the students to write their code. This archive will be defined by the programmers.
+    - The `template_archive_id` column is used to store the UUID used as the name of the archive in the file system. 
+
+- The `blocks_index` allows us to easily get an index for new blocks added to a laboratory. Also, having a separate table for the index allows us to easily change the order of the blocks without worrying about the type of the block.
+
+- The `rubric_id` field in the `grades` table allows teachers to grade students using different rubrics for the same laboratory (Ex: The teacher first grades the students using a rubric A but then decides to change the rubric to B and grade the students again).
